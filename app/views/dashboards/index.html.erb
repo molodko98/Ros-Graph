@@ -22,12 +22,15 @@
 
       client.query({
         query: gql`
-          query {
+          query getUser($username: String!){
+            user(username:$username)
+            repos(username:$username)
             testField
-            user(username: "dhh")
-            repos(username: "dhh")
           }
-        `
+        `,
+        variables: {
+          username: username
+        }
       }).then(({ data }) => { console.log(data) })
     })
   })

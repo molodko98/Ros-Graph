@@ -26,10 +26,10 @@ module Types
 
     def user(username:)
       users_response = HTTParty.get("http://api.github.com/users/#{username}")
-      parse_body = JSON.parse(users_response.body)
+      parsed_body = JSON.parse(users_response.body)
 
-      if parse_body['message'] != 'Not Found'
-        return parse_body['name']
+      if parsed_body['message'] != 'Not Found'
+        return parsed_body['name']
       else
         return 'Not Found'
       end
@@ -37,10 +37,11 @@ module Types
 
     def repos(username:)
       repos_response = HTTParty.get("http://api.github.com/users/#{username}/repos")
-      repos = JSON.parse(repos_response.body).map { |repo| repo['name'] }
+      parsed_body = JSON.parse(repos_response.body)
 
-      repos
+      return [] if parsed_body.is_a?(Hash) && parsed_body.key?('message')
+
+      parsed_body.map { |repo| repo['name'] }
     end
-
   end
 end
