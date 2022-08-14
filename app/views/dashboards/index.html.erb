@@ -1,11 +1,17 @@
 <div class="mb-3">
   <label class="form-label">GitHub_login</label>
-  <%= text_field_tag :username, nil, id: 'user-name' %>
+  <%= text_field_tag :username, nil, id: 'user-name', required: true %>
 </div>
 <%= submit_tag 'Find', id: 'find-user'  %>
 <br/>
 <br/>
 <br/>
+<h4>Fullname: </h4>
+<h1 id='full-name'></h1>
+
+<h4>List of repos</h4>
+<ul id='repos-list'>
+</ul>
 
 <script type="module">
   import { ApolloClient, InMemoryCache } from "@apollo/client";
@@ -31,7 +37,18 @@
         variables: {
           username: username
         }
-      }).then(({ data }) => { console.log(data) })
+      }).then(processGraphResponse)
     })
   })
+
+  function processGraphResponse(data) {
+    console.log(data.data)
+
+    $("#repos-list").empty()
+
+    $.each(data.data.repos, function( index, value ) {
+      $("#repos-list").append(`<li>${value}</li>`)
+    });
+    $('#full-name').text(data.data.user)
+  }
 </script>
